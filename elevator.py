@@ -1,4 +1,4 @@
-from singalslot import Signal
+from signalslot import Signal
 
 class Elevator(object):
     def __init__(self, id, size=10):
