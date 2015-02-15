@@ -5,6 +5,14 @@ class Floor(object):
         self.__height = height
         self.__people = [] # people currently on the floor (not necessarily waiting for elevators)
 
+    @property
+    def height(self):
+        return self.__height
+
+    @property
+    def num(self):
+        return self.__num
+
     def getNextPerson(self):
         """
         return list of people waiting for the elevator
