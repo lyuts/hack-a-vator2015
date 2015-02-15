@@ -10,6 +10,7 @@ import time
 
 
 class BuildingCanvas(Widget):
+
     def setup(self, floors=[], elevators=[]):
         self.__floors = floors
         self.__elevators = elevators
@@ -17,22 +18,33 @@ class BuildingCanvas(Widget):
     def update(self, time_delta):
         print "BuildingCanvas::update>", time_delta
 
-	with self.canvas:
-	    # Add a red color
-	    Color(1., 0, 0)
-#            e = ElevatorWidget()
-#            e.draw()
-            print type(e)
+	with self.canvas as canvas:
+            canvas_width, canvas_height = self.size
 
-	    # Add a rectangle
-#            if not self.r:
-#            r = Rectangle(pos=nextPos, size=(500, 500))
-#            else:
-#                r.pos = nextPos
+            # clear canvas
+            Color(0, 0, 0)
+            Rectangle(pos=(canvas_width / 2, 0), size=(canvas_width / 2, canvas_height))
 
-#	    print type(r.pos[0])
-#	    print dir(r.pos)
+            ELEVATOR_WIDTH_PX = 20
+            ELEVATOR_HEIGHT_PX = canvas_height / len(self.__floors)
+            FLOOR_WIDTH_PX = canvas_width / 2
+            FLOOR_HEIGHT_PX = ELEVATOR_HEIGHT_PX
+
+            # draw floors
+            for floor in self.__floors:
+                Color(.1 * floor.num, 0, 0)
+                x = 0
+                y = FLOOR_HEIGHT_PX * (floor.num-1)
+                size = (FLOOR_WIDTH_PX, FLOOR_HEIGHT_PX)
+                Rectangle(pos=(x, y), size=size)
             
+            # draw elevators
+            for elevator in self.__elevators:
+                Color(0, .1 * elevator.id, 0)
+                x = ELEVATOR_WIDTH_PX * (elevator.id - 1)
+                y = elevator.position
+                size = (ELEVATOR_WIDTH_PX, ELEVATOR_HEIGHT_PX)
+                Rectangle(pos=(x, y), size=size)
 
 def generateFloors():
     """
