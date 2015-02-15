@@ -1,24 +1,26 @@
 from kivy.app import App
+from kivy.clock import Clock
 from kivy.graphics import *
 from kivy.uix.widget import Widget
 from widgets.elevatorwidget import ElevatorWidget
-import elevator
+from elevator import Elevator, Controller
 from person import Person
+from floor import Floor
 import time
 
 
 class BuildingCanvas(Widget):
-#    def __init__(self):
-#        self.r = None
+    def setup(self, floors=[], elevators=[]):
+        self.__floors = floors
+        self.__elevators = elevators
 
-    def update(self, dt):
-        pass
+    def update(self, time_delta):
+        print "BuildingCanvas::update>", time_delta
 
-    def d(self, nextPos=(10, 10)):
 	with self.canvas:
 	    # Add a red color
 	    Color(1., 0, 0)
-            e = ElevatorWidget()
+#            e = ElevatorWidget()
 #            e.draw()
             print type(e)
 
@@ -32,18 +34,43 @@ class BuildingCanvas(Widget):
 #	    print dir(r.pos)
             
 
+def generateFloors():
+    """
+    return [ floor1, floor2, ... ]
+    """
+
+    NUM_FLOORS = 6
+    floors = []
+    for id in range(1, NUM_FLOORS + 1):
+        floors.append(Floor(id))
+
+    return floors
+
+def generateElevators():
+    """
+    Generates elevators (or reads them from input)
+    return [ elev1, elev2, ... ]
+    """
+
+    NUM_ELEVATORS = 6
+    elevators = []
+    for id in range(1, NUM_ELEVATORS + 1):
+        elevators.append(Elevator(id))
+
+    return elevators
+
 class Hackavator(App):
     def build(self):
-        Clock.schedule_interval(BuildingCanvas.update, 1.0)
-        ec = ElevatorController() 
-	#print dir(BuildingCanvas())
-
         floors = generateFloors()
         elevators = generateElevators()
 
+        print "Hackavator with %d floors and %d elevators" % (len(floors), len(elevators))
+#        ec = Controller() 
+
         buildingCanvas = BuildingCanvas()
-        buildingCanvas.setFloors(floors)
-        buildingCanvas.setElevators(elevators)
+        buildingCanvas.setup(floors, elevators)
+
+        Clock.schedule_interval(buildingCanvas.update, 1.0)
 
 	return buildingCanvas
 
