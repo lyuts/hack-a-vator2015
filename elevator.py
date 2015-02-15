@@ -7,6 +7,7 @@ class Elevator(object):
         self.__signal_person_inside = Signal(args=['person'])
         self.__size = size
         self.__velocity = 0
+        self.__position = 0
 
     def stop(self):
         self.__velocity = 0
@@ -20,12 +21,20 @@ class Elevator(object):
         pass
 
     @property
+    def id(self):
+        return self.__id
+
+    @property
     def size(self):
         return self.__size
 
     @property
     def velocity(self):
         return self.__velocity
+
+    @property
+    def position(self):
+        return self.__position
 
     @property
     def people(self):
