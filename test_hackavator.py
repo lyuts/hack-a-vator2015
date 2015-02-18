@@ -1,27 +1,67 @@
-from mock import Mock
+from mock import Mock, patch
 from person import Person
+from floor import Floor
+from elevator import Elevator, Controller
+from signalslot import Signal
 import unittest
 
-class PersonUnitTests(unittest.TestCase):
+@patch('signalslot.signal.inspect')
+class FloorUnitTests(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_request_elevator(self):
-        p = Person(0, 0)
+    def test_properties(self, method):
+        f = Floor(num=1, height=10)
+        self.assertEqual(1, f.num)
+        self.assertEqual(10, f.height)
+        self.assertTrue(type(f.signal_elevator_requested) is Signal)
+        self.assertTrue(type(f.people) is list)
+        self.assertTrue(type(f.queue) is list)
+
+    def test_request_elevator(self, method):
         observer = Mock()
-        invoked_floor_pair = { 'count' : 0}
 
-        def custom_slot(**kwargs):
-            invoked_floor_pair['from_floor'] = kwargs['from_floor']
-            invoked_floor_pair['to_floor'] = kwargs['to_floor']
-            invoked_floor_pair['count'] += 1
+        f = Floor(num=0, height=0)
+        f.signal_elevator_requested.connect(observer)
+        f.signal_elevator_requested.emit(from_floor=1, to_floor=2)
 
-        p.request_elevator.connect(custom_slot)
-        p.request_elevator.emit(from_floor=1, to_floor=2)
+        observer.assert_called_once_with(from_floor=1, to_floor=2)
 
-        self.assertEqual(1, invoked_floor_pair['from_floor'])
-        self.assertEqual(2, invoked_floor_pair['to_floor'])
-        self.assertEqual(1, invoked_floor_pair['count'], 'There should be exactly 1 invocation')
+class ElevatorUnitTests(unittest.TestCase):
+    def setUp(self):
+        pass
+
+    def test_properties(self):
+        e = Elevator(id=6, size=7)
+        self.assertEqual(6, e.id)
+        self.assertEqual(7, e.size)
+        self.assertTrue(type(e.signal_person_inside) is Signal)
+        self.assertTrue(type(e.signal_position_change) is Signal)
+        self.assertTrue(type(e.velocity) is int)
+        self.assertTrue(type(e.position) is int)
+        self.assertTrue(type(e.people) is list)
+
+    def test_poisition_change(self):
+        e = Elevator(id=6, size=7)
+
+class PersonUnitTests(unittest.TestCase):
+    def test_properties(self):
+        p = Person(curr_floor=2, dest_floor=1)
+        self.assertEqual(2, p.curr_floor)
+        self.assertEqual(1, p.dest_floor)
+
+class ControllerUnitTests(unittest.TestCase):
+    def test_default_contruction(self):
+        c = Controller()
+
+    def test_properties(self):
+        floors = [ Floor(1, 7), Floor(2, 7) ]
+        elevators = [ Elevator(id=1, size=10)]
+
+        c = Controller(floors, elevators)
+
+        self.assertTrue(type(c.signal_change_velocity) is Signal)
+        self.assertTrue(type(c.signal_stop) is Signal)
 
 if __name__ == "__main__":
     unittest.main()
