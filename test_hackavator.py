@@ -32,9 +32,10 @@ class ElevatorUnitTests(unittest.TestCase):
         pass
 
     def test_properties(self):
-        e = Elevator(id=6, size=7)
+        e = Elevator(id=6, size=7, height=17)
         self.assertEqual(6, e.id)
         self.assertEqual(7, e.size)
+        self.assertEqual(17, e.height)
         self.assertTrue(type(e.signal_person_inside) is Signal)
         self.assertTrue(type(e.signal_position_change) is Signal)
         self.assertTrue(type(e.velocity) is int)
@@ -43,6 +44,14 @@ class ElevatorUnitTests(unittest.TestCase):
 
     def test_poisition_change(self):
         e = Elevator(id=6, size=7)
+
+        observer = Mock()
+
+        f = Floor(num=0, height=0)
+        e.signal_position_change.connect(observer)
+        e.signal_elevator_requested.emit(from_floor=1, to_floor=2)
+
+        observer.assert_called_once_with(from_floor=1, to_floor=2)
 
 class PersonUnitTests(unittest.TestCase):
     def test_properties(self):
