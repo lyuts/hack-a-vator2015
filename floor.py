@@ -37,16 +37,10 @@ class Floor(object):
     def signal_people_boarded(self):
         return self.__signal_people_boarded
 
-    def door_opened(self, **kwargs):
-        floor_num = kwargs['floor_num']
+    def door_opened(self, floor_num, direction, available_capacity, people_inside, elevator_id, **kwargs):
 
         if floor_num != self.num:
             return
-
-        goes_up = kwargs['direction']
-        available_capacity = kwargs['available_capacity']
-        people_inside = kwargs['people_inside']
-        elevator_id = kwargs['id']
 
         newcomers = []
         for p in self.queue:
@@ -91,5 +85,5 @@ class Floor(object):
             # take new person from the list
             pass
 
-    def elevator_doors_open(self, **kwargs):
+    def elevator_doors_open(self, id, **kwargs):
         pass
